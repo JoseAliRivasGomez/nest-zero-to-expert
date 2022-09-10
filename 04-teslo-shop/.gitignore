@@ -33,8 +33,3 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-/mongo
-
-.env
-.env.prod

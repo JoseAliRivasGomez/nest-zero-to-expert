@@ -33,7 +33,7 @@ export class PokeApiAdapter implements HttpAdapter {
         return;
     }
     
-    async path(url: string, data: any) {
+    async patch(url: string, data: any) {
 
         return;
     }
