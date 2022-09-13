@@ -7,6 +7,7 @@ import { Product } from './entities/product.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import {validate as isUUID} from 'uuid'
 import { ProductImage } from './entities/product-image.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -23,7 +24,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     
     try {
 
@@ -31,7 +32,8 @@ export class ProductsService {
 
       const product = this.productRepository.create({
         ...createProductDto,
-        images: images.map(image => this.productImageRepository.create({url:image}))
+        images: images.map(image => this.productImageRepository.create({url:image})),
+        user,
       });
       await this.productRepository.save(product);
       return {...product, images};
@@ -70,6 +72,7 @@ export class ProductsService {
         slug: term.toLocaleLowerCase(),
       })
       .leftJoinAndSelect('prod.images', 'prodImages')
+      .leftJoinAndSelect('prod.user', 'prodIUser')
       .getOne();
     }
     
@@ -86,7 +89,7 @@ export class ProductsService {
     }
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
 
     const {images, ...rest} = updateProductDto;
     
@@ -105,6 +108,7 @@ export class ProductsService {
         product.images = images.map(img => this.productImageRepository.create({url: img}));
       }
 
+      product.user = user;
       await queryRunner.manager.save(product);
 
       await queryRunner.commitTransaction();
@@ -138,7 +142,7 @@ export class ProductsService {
     }
   }
 
-  private handleExceptions(error: any){
+  private handleExceptions(error: any): never {
     if(error.code === '23505') throw new BadRequestException(error.detail);
     this.logger.error(error);
     throw new InternalServerErrorException(`Can't continue - Check server logs`);
