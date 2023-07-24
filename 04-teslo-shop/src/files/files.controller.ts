@@ -27,12 +27,14 @@ export class FilesController {
     fileFilter: fileFilter,
     //limits: {fileSize: 1000},
     storage: diskStorage({
-      destination: './static/uploads',
+      destination: './static/products',
       filename: fileNamer
     })
   }))
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
 
+    //console.log(file);
+    
     if(!file) {
       throw new BadRequestException('Make sure that the file is an image');
     }
@@ -40,7 +42,7 @@ export class FilesController {
     const secureUrl = `${this.configService.get('HOST_API')}/files/product/${file.filename}`;
 
     return {
-      secureUrl
+      image: file.filename
     };
   }
 
