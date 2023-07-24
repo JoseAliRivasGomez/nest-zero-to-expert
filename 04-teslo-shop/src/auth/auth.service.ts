@@ -54,13 +54,13 @@ export class AuthService {
 
       const user = await this.userRepository.findOne({
         where: {email},
-        select: {email: true, password: true, id: true}
+        select: {email: true, password: true, id: true, fullName: true, isActive: true, roles: true}
       });
-      
+
       if(!user) throw new UnauthorizedException('Invalid credentials');
 
       if(!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('Invalid credentials');
-
+      
       delete user.password;
       return {
         ...user,
@@ -87,7 +87,9 @@ export class AuthService {
 
   private handleExceptions(error: any): never {
     if(error.code === '23505') throw new BadRequestException(error.detail);
+    if(error.status === 401) throw new UnauthorizedException(error.response);
     this.logger.error(error);
     throw new InternalServerErrorException(`Can't continue - Check server logs`);
+    //throw new UnauthorizedException(error.response);
   }
 }
