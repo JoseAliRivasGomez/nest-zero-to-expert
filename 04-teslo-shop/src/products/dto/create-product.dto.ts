@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsPositive, IsInt, MinLength, IsArray, IsIn } from "class-validator";
+import { IsString, IsNumber, IsOptional, IsPositive, IsInt, MinLength, IsArray, IsIn, Min } from "class-validator";
 
 export class CreateProductDto {
 
@@ -20,7 +20,7 @@ export class CreateProductDto {
     slug?: string;
 
     @IsInt()
-    @IsPositive()
+    @Min(0)
     @IsOptional()
     stock?: number;
 
