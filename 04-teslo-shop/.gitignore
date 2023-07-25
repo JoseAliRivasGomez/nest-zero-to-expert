@@ -5,8 +5,8 @@
 
 .env
 
-/static/products/*.*
-/static/uploads/*.*
+# /static/products/*.*
+# /static/uploads/*.*
 
 # Logs
 logs
